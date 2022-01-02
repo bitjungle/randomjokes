@@ -8,15 +8,15 @@ SET NAMES utf8mb4;
 DROP TABLE IF EXISTS `jokes`;
 CREATE TABLE `jokes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `joke` text NOT NULL,
-  `keywords` varchar(1000) DEFAULT NULL,
+  `value` text NOT NULL,
+  `category` varchar(255) DEFAULT NULL,
   `added_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `changed_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `deleted` tinyint(1) unsigned zerofill NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `jokes` (`id`, `joke`, `keywords`, `added_date`, `changed_date`, `deleted`) VALUES
+INSERT INTO `jokes` (`id`, `value`, `category`, `added_date`, `changed_date`, `deleted`) VALUES
 (1,	'Det er bedre å la andre tro du er en idiot, enn å åpne kjeften og fjerne enhver tvil.',	'russekort',	'2022-01-02 09:36:35',	'2022-01-02 09:36:35',	0),
 (2,	'Ingenting er mer irriterende enn å diskutere med en person som vet hva han snakker om.',	'russekort',	'2022-01-02 09:36:49',	'2022-01-02 09:36:49',	0),
 (3,	'Jeg har vært i tvil hele livet, men nå er jeg ikke sikker lenger, eller…',	'russekort',	'2022-01-02 09:37:01',	'2022-01-02 09:37:01',	0),

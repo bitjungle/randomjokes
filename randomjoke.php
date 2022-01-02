@@ -8,7 +8,7 @@
  */
 require_once 'Database.php';
 try {
-    $db = new Database('/var/www/db-php-js-fetch-settings.ini');
+    $db = new Database('/path/to/settings.ini');
     if (isset($_POST['str']) && strlen($_POST['str']) > 0) {
         echo json_encode($db->selectRandomJoke($_POST['str']));
     } else if (isset($_GET['str']) && strlen($_GET['str']) > 0) {

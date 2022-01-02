@@ -57,6 +57,22 @@ class Database extends PDO
     }
 
     /**
+     * Select a random joke from the database
+     * 
+     * @param string $category_filter 
+     * 
+     * @return array|false
+     */
+    public function selectRandomJoke($category_filter=NULL) 
+    {
+        // TODO Filter by category
+        $query = 'SELECT * FROM jokes WHERE deleted = 0 ORDER BY RAND() LIMIT 1;';
+        $stmt = $this->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Search the database for a specific string
      * 
      * @param string $str The search string
@@ -75,21 +91,15 @@ class Database extends PDO
     }
 
     /**
-     * Select a random joke from the database
+     * TODO
      * 
-     * @param string $category_filter 
      * 
      * @return array|false
      */
-    public function selectRandomJoke($category_filter=NULL) 
+    public function getCategories() 
     {
-        // TODO Filter by category
-        $query = 'SELECT * FROM jokes WHERE deleted = 0 ORDER BY RAND() LIMIT 1;';
-        $stmt = $this->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // TODO 
     }
-
 
 }
 ?>

@@ -66,5 +66,5 @@ async function getCategories() {
         };
     }
     const joke = await fetchStuff(url, params);
-    document.querySelector("#randomJoke").innerHTML = joke.joke;
+    document.querySelector("#randomJoke").innerHTML = joke.value;
 }
