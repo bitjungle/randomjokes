@@ -1,10 +1,12 @@
 /** 
- * Javascript frontend to api.chucknorris.io
+ * Javascript frontend for the Random Joke App
  * 
  * Copyright (C) 2022 BITJUNGLE Rune Mathisen
  * This code is licensed under a GPLv3 license 
  * See http://www.gnu.org/licenses/gpl-3.0.html 
  */
+
+const DB_API_URL = "http://it.vgs.no/demo/randomjokes/randomjoke.php";
 
 window.addEventListener('load', init);
 
@@ -58,7 +60,7 @@ async function getCategories() {
  * Fetch new joke and write to html
  */
  async function newJoke() {
-    const url = new URL("http://it.vgs.no/demo/jokemachine/randomjoke.php");
+    const url = new URL(DB_API_URL);
     let params;
     if (document.querySelector("#category").value) {
         params = {

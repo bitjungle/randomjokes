@@ -1,5 +1,5 @@
 /** 
- * Joke Machine
+ * Random Joke App
  * 
  * Copyright (C) 2022 BITJUNGLE Rune Mathisen
  * This code is licensed under a GPLv3 license 
@@ -21,11 +21,13 @@
 }
 #newJoke:hover {
     background-color: skyblue;
+    border-radius: 25%;
 }
 #newJoke:active {
     background-color: coral;
     box-shadow: inset 1px 2px rgba(0, 0, 0, 0.5);
-    border-radius: 20%;
+    border-radius: 25%;
+    opacity: 0.25;
 }
 #randomJoke {
     background-color: snow;

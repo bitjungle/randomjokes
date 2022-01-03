@@ -5,6 +5,17 @@ SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
 SET NAMES utf8mb4;
 
+DROP TABLE IF EXISTS `categories`;
+CREATE TABLE `categories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `value` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO `categories` (`id`, `value`) VALUES
+(1,	'russekort'),
+(2,	'allebarna');
+
 DROP TABLE IF EXISTS `jokes`;
 CREATE TABLE `jokes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -34,3 +45,32 @@ INSERT INTO `jokes` (`id`, `value`, `category`, `added_date`, `changed_date`, `d
 (15,	'Alle barna satt på do i fred unntatt Åse, hun glemte å låse.',	'allebarna',	'2022-01-02 09:42:51',	'2022-01-02 09:42:51',	0),
 (16,	'Alle barna støttet regnskogen unntatt Sara, hun støttet Sahara.',	'allebarna',	'2022-01-02 09:46:12',	'2022-01-02 09:46:12',	0),
 (17,	'Alle barna hadde fine tenner unntatt Rune, hans var brune.',	'allebarna',	'2022-01-02 09:47:17',	'2022-01-02 09:47:17',	0);
+
+DROP TABLE IF EXISTS `jokes_categories`;
+CREATE TABLE `jokes_categories` (
+  `joke_id` int(11) NOT NULL,
+  `categories_id` int(11) NOT NULL,
+  KEY `joke_id` (`joke_id`),
+  KEY `categories_id` (`categories_id`),
+  CONSTRAINT `jokes_categories_ibfk_1` FOREIGN KEY (`joke_id`) REFERENCES `jokes` (`id`),
+  CONSTRAINT `jokes_categories_ibfk_2` FOREIGN KEY (`categories_id`) REFERENCES `categories` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO `jokes_categories` (`joke_id`, `categories_id`) VALUES
+(1,	1),
+(2,	1),
+(3,	1),
+(4,	1),
+(5,	1),
+(6,	1),
+(7,	1),
+(8,	1),
+(9,	1),
+(10,	1),
+(11,	1),
+(12,	1),
+(13,	1),
+(14,	1),
+(15,	2),
+(16,	2),
+(17,	2);

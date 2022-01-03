@@ -1,16 +1,6 @@
 <?php 
 /**
- * Database class for the jokemachine app
- * 
- * CREATE TABLE `jokes` (
- *   `id` int(11) NOT NULL AUTO_INCREMENT,
- *   `joke` text NOT NULL,
- *   `keywords` varchar(1000) DEFAULT NULL,
- *   `added_date` timestamp NOT NULL DEFAULT current_timestamp(),
- *   `changed_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
- *   `deleted` tinyint(1) unsigned zerofill NOT NULL DEFAULT 0,
- *   PRIMARY KEY (`id`)
- * ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+ * Database class for the Random Joke app
  * 
  * Copyright (C) 2022 BITJUNGLE Rune Mathisen
  * This code is licensed under a GPLv3 license 
@@ -63,7 +53,7 @@ class Database extends PDO
      * 
      * @return array|false
      */
-    public function selectRandomJoke($category_filter=NULL) 
+    public function selectRandomJoke($category=NULL) 
     {
         // TODO Filter by category
         $query = 'SELECT * FROM jokes WHERE deleted = 0 ORDER BY RAND() LIMIT 1;';
@@ -82,24 +72,29 @@ class Database extends PDO
     public function searchJokes($str) 
     {
         $query = 'SELECT * FROM jokes 
-                  WHERE keywords LIKE :search_string  
-                  OR joke LIKE :search_string 
-                  WHERE deleted = 0;';
+                  WHERE value LIKE :search_string  
+                  AND deleted = 0;';
         $stmt = $this->prepare($query);
         $stmt->execute(['search_string' => "%{$str}%"]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
-     * TODO
+     * Return all joke categories as a list
      * 
-     * 
-     * @return array|false
+     * @return array
      */
-    public function getCategories() 
+    public function getAllCategories() 
     {
-        // TODO 
+        $query = 'SELECT value FROM categories;';
+        $stmt = $this->prepare($query);
+        $stmt->execute();
+        $assoc = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $list = [];
+        foreach ($assoc as $val) {
+            array_push($list, $val['value']);
+        }
+        return $list;
     }
-
 }
 ?>
