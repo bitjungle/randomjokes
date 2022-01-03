@@ -68,10 +68,11 @@ class Database extends PDO
             WHERE deleted = 0 
             ORDER BY RAND() LIMIT 1;';
         }
-        
         $stmt = $this->prepare($query);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $assoc = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        error_log(json_encode($assoc), 0);
+        return $assoc;
     }
 
     /**

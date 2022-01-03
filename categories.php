@@ -7,6 +7,10 @@
  * See http://www.gnu.org/licenses/gpl-3.0.html 
  */
 require_once 'Database.php';
+
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json');
+
 try {
     $db = new Database('/path/to/settings.ini');
     echo json_encode($db->getAllCategories());

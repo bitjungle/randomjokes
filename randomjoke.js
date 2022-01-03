@@ -6,7 +6,8 @@
  * See http://www.gnu.org/licenses/gpl-3.0.html 
  */
 
-const DB_API_URL = "http://it.vgs.no/demo/randomjokes/randomjoke.php";
+const DB_API_URL_JOKE = 'http://it.vgs.no/demo/randomjokes/randomjoke.php';
+const DB_API_URL_CAT = 'http://it.vgs.no/demo/randomjokes/categories.php';
 
 window.addEventListener('load', init);
 
@@ -15,8 +16,9 @@ window.addEventListener('load', init);
  * 
  */
 function init() {
+    console.log('init()');
     document.querySelector("#newJoke").addEventListener('click', newJoke);
-    //getCategories(); // TODO
+    getCategories();
     newJoke();
 }
 
@@ -29,6 +31,7 @@ function init() {
  * @returns Json data
  */
 async function fetchStuff(url, params=undefined) {
+    console.log(`fetchStuff(${url}, ${params})`);
     if (typeof params === 'object') {
          for (let k in params) {
             url.searchParams.append(k, params[k]);
@@ -46,8 +49,9 @@ async function fetchStuff(url, params=undefined) {
  * Make category select menu with values from api
  */
 async function getCategories() {
+    console.log('getCategories()');
     const categorySelect = document.querySelector("#category");
-    const url = new URL("..."); // TODO
+    const url = new URL(DB_API_URL_CAT);
     const categories = await fetchStuff(url);
     categories.forEach(category => {
         let opt = document.createElement("option");
@@ -60,7 +64,8 @@ async function getCategories() {
  * Fetch new joke and write to html
  */
  async function newJoke() {
-    const url = new URL(DB_API_URL);
+    console.log('newJoke()');
+    const url = new URL(DB_API_URL_JOKE);
     let params;
     if (document.querySelector("#category").value) {
         params = {
@@ -68,5 +73,5 @@ async function getCategories() {
         };
     }
     const joke = await fetchStuff(url, params);
-    document.querySelector("#randomJoke").innerHTML = joke.value;
+    document.querySelector("#randomJoke").innerHTML = joke.value.replace('\n', '<br>');
 }
