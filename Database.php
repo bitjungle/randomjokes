@@ -49,14 +49,26 @@ class Database extends PDO
     /**
      * Select a random joke from the database
      * 
-     * @param string $category_filter 
-     * 
+     * @param string $category
      * @return array|false
      */
     public function selectRandomJoke($category=NULL) 
     {
-        // TODO Filter by category
-        $query = 'SELECT * FROM jokes WHERE deleted = 0 ORDER BY RAND() LIMIT 1;';
+        if ($category) {
+            $cat_id = $this->getCategoryId($category);
+            $query = "SELECT * FROM jokes 
+                      WHERE id IN (
+                        SELECT joke_id 
+                        FROM jokes_categories 
+                        WHERE categories_id = {$cat_id})
+                      AND deleted = 0 
+                      ORDER BY RAND() LIMIT 1;";
+        } else {
+            $query = 'SELECT * FROM jokes 
+            WHERE deleted = 0 
+            ORDER BY RAND() LIMIT 1;';
+        }
+        
         $stmt = $this->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -66,7 +78,6 @@ class Database extends PDO
      * Search the database for a specific string
      * 
      * @param string $str The search string
-     * 
      * @return array|false
      */
     public function searchJokes($str) 
@@ -95,6 +106,20 @@ class Database extends PDO
             array_push($list, $val['value']);
         }
         return $list;
+    }
+
+    /**
+     * Get category id for the specified category value
+     * 
+     * @param string $category
+     * @return int
+     */
+    private function getCategoryId($category) {
+        $query = 'SELECT id FROM categories WHERE value = :search_string;';
+        $stmt = $this->prepare($query);
+        $stmt->execute(['search_string' => $category]);
+        $assoc = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return intval($assoc[0]['id']);
     }
 }
 ?>
