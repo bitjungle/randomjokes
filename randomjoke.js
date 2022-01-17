@@ -6,8 +6,8 @@
  * See http://www.gnu.org/licenses/gpl-3.0.html 
  */
 
-const DB_API_URL_JOKE = 'http://it.vgs.no/demo/randomjokes/randomjoke.php';
-const DB_API_URL_CAT = 'http://it.vgs.no/demo/randomjokes/categories.php';
+const DB_API_URL_JOKE = 'https://it.vgs.no/demo/randomjokes/randomjoke.php';
+const DB_API_URL_CAT = 'https://it.vgs.no/demo/randomjokes/categories.php';
 
 window.addEventListener('load', init);
 
