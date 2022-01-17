@@ -56,22 +56,24 @@ class Database extends PDO
     {
         if ($category) {
             $cat_id = $this->getCategoryId($category);
-            $query = "SELECT * FROM jokes 
+            $query = "SELECT id, value, added_date, changed_date 
+                      FROM jokes 
                       WHERE id IN (
-                        SELECT joke_id 
-                        FROM jokes_categories 
-                        WHERE categories_id = {$cat_id})
+                          SELECT joke_id 
+                          FROM jokes_categories 
+                          WHERE categories_id = {$cat_id}
+                      )
                       AND deleted = 0 
                       ORDER BY RAND() LIMIT 1;";
         } else {
-            $query = 'SELECT * FROM jokes 
-            WHERE deleted = 0 
-            ORDER BY RAND() LIMIT 1;';
+            $query = 'SELECT id, value, added_date, changed_date  
+                      FROM jokes 
+                      WHERE deleted = 0 
+                      ORDER BY RAND() LIMIT 1;';
         }
         $stmt = $this->prepare($query);
         $stmt->execute();
         $assoc = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        error_log(json_encode($assoc), 0);
         return $assoc;
     }
 
@@ -83,7 +85,8 @@ class Database extends PDO
      */
     public function searchJokes($str) 
     {
-        $query = 'SELECT * FROM jokes 
+        $query = 'SELECT id, value, added_date, changed_date  
+                  FROM jokes 
                   WHERE value LIKE :search_string  
                   AND deleted = 0;';
         $stmt = $this->prepare($query);
