@@ -12,7 +12,7 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 try {
-    $db = new Database('/path/to/settings.ini');
+    $db = new Database('settings.ini');
     echo json_encode($db->getAllCategories());
 } catch (exception $e) {
     http_response_code(503); // Service Unavailable
