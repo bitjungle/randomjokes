@@ -1,8 +1,9 @@
 export default class JokeAPI {
 
     constructor(baseURL) {
-        this.DB_API_URL_JOKE = `${baseURL}/randomjoke.php`;
-        this.DB_API_URL_CAT = `${baseURL}/categories.php`;
+        this.DB_API_URL_JOKE = new URL(`${baseURL}/randomjoke.php`);
+        this.DB_API_URL_CAT = new URL(`${baseURL}/categories.php`);
+        this.DB_API_URL_POST = new URL(`${baseURL}/postjoke.php`);
     }
 
     /**
@@ -29,28 +30,40 @@ export default class JokeAPI {
     }
 
     /**
-     * Make category select menu with values from api
+     * Get all joke categories from database
      */
     async getCategories() {
         console.log('JokeAPI.getCategories()');
-        const url = new URL(this.DB_API_URL_CAT);
-        const categories = await this.fetchStuff(url);
+        const categories = await this.fetchStuff(this.DB_API_URL_CAT);
         return categories;
     }
 
     /**
-     * Fetch new joke and write to html
+     * Fetch new joke
+     * 
+     * @returns string
      */
     async getJoke() {
         console.log('JokeAPI.getJoke()');
-        const url = new URL(this.DB_API_URL_JOKE);
         let params;
         if (document.querySelector("#category").value) {
             params = {
                 'category': document.querySelector("#category").value
             };
         }
-        const joke = await this.fetchStuff(url, params);
+        const joke = await this.fetchStuff(this.DB_API_URL_JOKE, params);
         return joke.value.replace('\n', '<br>');
+    }
+
+    /**
+     * Write joke to database
+     * 
+     * @param {FormData}
+     * @returns string
+     */
+     async writeJoke(formData) {
+        console.log('JokeAPI.writeJoke()');
+        const response = await fetch(this.DB_API_URL_POST, { method: "POST", body: formData });
+        return response;
     }
 }

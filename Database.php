@@ -64,6 +64,7 @@ class Database extends PDO
      */
     public function selectRandomJoke($category=NULL) 
     {
+        $cat_id = NULL;
         if ($category) {
             $cat_id = $this->getCategoryId($category);
             $query = "SELECT id, value, added_date, changed_date 

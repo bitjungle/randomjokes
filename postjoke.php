@@ -8,27 +8,34 @@
  */
 require_once 'Database.php';
 
-//header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: *');
 
 try {
-    $db = new Database('settings.ini');
+    $db = new Database('settings-jokes-runeelev.ini');
+    error_log("Got this joke: {$_POST['joke']}");
+    error_log("Got this id: {$_POST['id']}");
+    error_log("Got this password: {$_POST['pwd']}");
 
-    if (!isset($_GET['pwd']) || $db->validatePassword($_GET['pwd']) == 0) {
+     if (!isset($_POST['pwd']) || $db->validatePassword($_POST['pwd']) == 0) {
         exit(0);
+    } else {
+        echo $_POST['pwd'];
     }
-    
-    if (isset($_GET['joke']) && strlen($_GET['joke']) > 0) {
-        if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+   
+    if (isset($_POST['joke']) && strlen($_POST['joke']) > 0) {
+        error_log("Got a joke");
+        if (isset($_POST['id']) && is_numeric($_POST['id'])) {
             echo 'updating';
-            $db->updateJoke(intval($_GET['id']), $_GET['joke']);
+            $db->updateJoke(intval($_POST['id']), $_POST['joke']);
         } else {
+            error_log('Inserting a joke');
             echo 'inserting';
-            $db->insertJoke($_GET['joke']);
+            $db->insertJoke($_POST['joke']);
         }
-    } else if ((isset($_GET['delete']) && $_GET['delete'] == 'true') && 
-               (isset($_GET['id']) && is_numeric($_GET['id']))) {
+    } else if ((isset($_POST['delete']) && $_POST['delete'] == 'true') && 
+               (isset($_POST['id']) && is_numeric($_POST['id']))) {
             echo 'deleting';
-            $db->deleteJoke($_GET['id']);
+            $db->deleteJoke($_POST['id']);
     } else {
         echo 'nothing';
     }
