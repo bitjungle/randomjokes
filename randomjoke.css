@@ -38,3 +38,7 @@
 footer {
     font-size: small;
 }
+textarea {
+    border-left: 25%;
+    width: auto;
+}

@@ -6,8 +6,11 @@
  * See http://www.gnu.org/licenses/gpl-3.0.html 
  */
 
-const DB_API_URL_JOKE = 'https://it.vgs.no/demo/randomjokes/randomjoke.php';
-const DB_API_URL_CAT = 'https://it.vgs.no/demo/randomjokes/categories.php';
+import JokeAPI from './jokeapi.js';
+const jokeapi = new JokeAPI('https://it.vgs.no/demo/randomjokes');
+
+const jokeDOM = document.querySelector("#randomJoke");
+const categoryDOM = document.querySelector("#category");
 
 window.addEventListener('load', init);
 
@@ -17,61 +20,21 @@ window.addEventListener('load', init);
  */
 function init() {
     console.log('init()');
-    document.querySelector("#newJoke").addEventListener('click', newJoke);
-    getCategories();
-    newJoke();
+    document.querySelector("#newJoke").addEventListener('click', jokeToPage);
+    categoriesToPage();
+    jokeToPage();
 }
 
-/**
- * Fetch Json data from the specified url, 
- * verbose output to console for educational purposes
- * 
- * @param {URL} url 
- * @param {Object} params 
- * @returns Json data
- */
-async function fetchStuff(url, params=undefined) {
-    console.log(`fetchStuff(${url}, ${params})`);
-    if (typeof params === 'object') {
-         for (let k in params) {
-            url.searchParams.append(k, params[k]);
-        }
-    }
-    console.log(url);
-    const response = await fetch(url);
-    console.log(response);
-    const jsonData = await response.json();
-    console.log(jsonData);
-    return jsonData;
+async function jokeToPage() {
+    const joke = await jokeapi.getJoke();
+    jokeDOM.innerHTML = joke;
 }
 
-/**
- * Make category select menu with values from api
- */
-async function getCategories() {
-    console.log('getCategories()');
-    const categorySelect = document.querySelector("#category");
-    const url = new URL(DB_API_URL_CAT);
-    const categories = await fetchStuff(url);
+async function categoriesToPage() {
+    const categories = await jokeapi.getCategories();
     categories.forEach(category => {
         let opt = document.createElement("option");
         opt.innerHTML = category;
-        categorySelect.appendChild(opt);
+        categoryDOM.appendChild(opt);
     });
-}
-
-/**
- * Fetch new joke and write to html
- */
- async function newJoke() {
-    console.log('newJoke()');
-    const url = new URL(DB_API_URL_JOKE);
-    let params;
-    if (document.querySelector("#category").value) {
-        params = {
-            'category': document.querySelector("#category").value
-        };
-    }
-    const joke = await fetchStuff(url, params);
-    document.querySelector("#randomJoke").innerHTML = joke.value.replace('\n', '<br>');
 }
