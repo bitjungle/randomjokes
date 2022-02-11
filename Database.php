@@ -34,6 +34,16 @@ class Database extends PDO
     }
 
     /**
+     * Validate database password
+     * 
+     * @return bool 
+     */
+    public function validatePassword($pwd) {
+        return ($this->_ini['db']['passwd'] == $pwd);
+    }
+
+
+    /**
      * Select all data in the database table
      * 
      * @return array|false
@@ -124,6 +134,50 @@ class Database extends PDO
         $stmt->execute(['search_string' => $category]);
         $assoc = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return intval($assoc[0]['id']);
+    }
+
+    /**
+     * Insert new joke into the database
+     * 
+     * @param string $joke
+     * @return bool true on success or false on failure
+     */
+    public function insertJoke($joke) {
+        $query = "INSERT INTO `jokes` (`value`, `added_date`, `changed_date`, `deleted`)
+                  VALUES (:joke_string, now(), now(), '0')";
+        $stmt = $this->prepare($query);
+        return $stmt->execute(['joke_string' => $joke]);
+    }
+
+    /**
+     * Update an existing joke in the database
+     * 
+     * @param int $id
+     * @param string $joke
+     * @return bool true on success or false on failure
+     */
+    public function updateJoke($id, $joke) {
+        $query = "UPDATE `jokes` SET
+                    `value` = :joke_string,
+                    `changed_date` = now()
+                  WHERE `id` = :id_value;";
+        $stmt = $this->prepare($query);
+        return $stmt->execute(['id_value' => $id, 'joke_string' => $joke]);
+    }
+
+    /**
+     * Delete a joke
+     * 
+     * @param int $id
+     * @return bool true on success or false on failure
+     */
+    public function deleteJoke($id) {
+        $query = "UPDATE `jokes` SET
+                    `deleted` = 1,
+                    `changed_date` = now()
+                  WHERE `id` = :id_value;";
+        $stmt = $this->prepare($query);
+        return $stmt->execute(['id_value' => $id]);
     }
 }
 ?>
