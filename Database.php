@@ -61,7 +61,7 @@ class Database extends PDO
                       WHERE id IN (
                           SELECT joke_id 
                           FROM jokes_categories 
-                          WHERE categories_id = {$cat_id}
+                          WHERE categories_id = :search_string
                       )
                       AND deleted = 0 
                       ORDER BY RAND() LIMIT 1;";
@@ -72,7 +72,7 @@ class Database extends PDO
                       ORDER BY RAND() LIMIT 1;';
         }
         $stmt = $this->prepare($query);
-        $stmt->execute();
+        $stmt->execute(['search_string' => $cat_id]);
         $assoc = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $assoc;
     }
