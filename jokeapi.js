@@ -64,6 +64,8 @@ export default class JokeAPI {
      async writeJoke(formData) {
         console.log('JokeAPI.writeJoke()');
         const response = await fetch(this.DB_API_URL_POST, { method: "POST", body: formData });
-        return response;
+        const jsonData = await response.json();
+        console.log(jsonData);
+        return jsonData;
     }
 }

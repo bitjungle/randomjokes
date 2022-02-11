@@ -9,35 +9,30 @@
 require_once 'Database.php';
 
 header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json');
 
 try {
     $db = new Database('settings-jokes-runeelev.ini');
-    error_log("Got this joke: {$_POST['joke']}");
-    error_log("Got this id: {$_POST['id']}");
-    error_log("Got this password: {$_POST['pwd']}");
 
      if (!isset($_POST['pwd']) || $db->validatePassword($_POST['pwd']) == 0) {
+        echo '{"status": "wrong password"}';
         exit(0);
-    } else {
-        echo $_POST['pwd'];
     }
    
     if (isset($_POST['joke']) && strlen($_POST['joke']) > 0) {
-        error_log("Got a joke");
         if (isset($_POST['id']) && is_numeric($_POST['id'])) {
-            echo 'updating';
             $db->updateJoke(intval($_POST['id']), $_POST['joke']);
+            echo '{"status": "updated joke"}';
         } else {
-            error_log('Inserting a joke');
-            echo 'inserting';
             $db->insertJoke($_POST['joke']);
+            echo '{"status": "inserted joke"}';
         }
     } else if ((isset($_POST['delete']) && $_POST['delete'] == 'true') && 
                (isset($_POST['id']) && is_numeric($_POST['id']))) {
-            echo 'deleting';
             $db->deleteJoke($_POST['id']);
+            echo '{"status": "deleted joke"}';
     } else {
-        echo 'nothing';
+        echo '{"status": "did nothing"}';
     }
 
 } catch (exception $e) {
