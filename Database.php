@@ -57,6 +57,26 @@ class Database extends PDO
     }
 
     /**
+     * Select a specific joke from the database
+     * 
+     * @param int $id
+     * @return array|false
+     */
+    public function selectJoke($id) 
+    {
+        $query = "SELECT id, value, added_date, changed_date 
+                    FROM jokes 
+                    WHERE id = :joke_id
+                    AND deleted = 0;";
+        error_log('iiiidddd' + id);
+        error_log($query);
+        $stmt = $this->prepare($query);
+        $stmt->execute(['joke_id' => $id]);
+        $assoc = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $assoc;
+    }
+
+    /**
      * Select a random joke from the database
      * 
      * @param string $category

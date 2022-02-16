@@ -2,6 +2,7 @@ export default class JokeAPI {
 
     constructor(baseURL) {
         this.DB_API_URL_JOKE = new URL(`${baseURL}/randomjoke.php`);
+        this.DB_API_URL_JOKE_ID = new URL(`${baseURL}/getjoke.php`);
         this.DB_API_URL_CAT = new URL(`${baseURL}/categories.php`);
         this.DB_API_URL_POST = new URL(`${baseURL}/postjoke.php`);
     }
@@ -16,6 +17,7 @@ export default class JokeAPI {
      */
     async fetchStuff(url, params=undefined) {
         console.log(`JokeAPI.fetchStuff(${url}, ${params})`);
+        //console.log(params);
         if (typeof params === 'object') {
             for (let k in params) {
                 url.searchParams.append(k, params[k]);
@@ -43,16 +45,18 @@ export default class JokeAPI {
      * 
      * @returns string
      */
-    async getJoke() {
+    async getJoke(id = -1) {
         console.log('JokeAPI.getJoke()');
-        let params;
-        if (document.querySelector("#category").value) {
-            params = {
-                'category': document.querySelector("#category").value
-            };
+        let params = {};
+        if (id >= 0) {
+            params.id = id;
+            return await this.fetchStuff(this.DB_API_URL_JOKE_ID, params);
+        } else {
+            if (document.querySelector("#category").value) {
+                params.category = document.querySelector("#category").value;
+            }
+            return await this.fetchStuff(this.DB_API_URL_JOKE, params);
         }
-        const joke = await this.fetchStuff(this.DB_API_URL_JOKE, params);
-        return joke.value.replace('\n', '<br>');
     }
 
     /**
@@ -63,6 +67,7 @@ export default class JokeAPI {
      */
      async writeJoke(formData) {
         console.log('JokeAPI.writeJoke()');
+        console.log(formData);
         const response = await fetch(this.DB_API_URL_POST, { method: "POST", body: formData });
         const jsonData = await response.json();
         console.log(jsonData);

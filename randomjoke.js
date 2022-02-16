@@ -9,9 +9,6 @@
 import JokeAPI from './jokeapi.js';
 const jokeapi = new JokeAPI('https://it.vgs.no/demo/randomjokes');
 
-const jokeDOM = document.querySelector("#randomJoke");
-const categoryDOM = document.querySelector("#category");
-
 window.addEventListener('load', init);
 
 /**
@@ -27,7 +24,8 @@ function init() {
 
 async function jokeToPage() {
     const joke = await jokeapi.getJoke();
-    jokeDOM.innerHTML = joke;
+    document.querySelector("#randomJoke").innerHTML = joke.value.replace('\n', '<br>');
+    document.querySelector("#edit").setAttribute('href', `addedit.html?id=${joke.id}`);
 }
 
 async function categoriesToPage() {
@@ -35,6 +33,6 @@ async function categoriesToPage() {
     categories.forEach(category => {
         let opt = document.createElement("option");
         opt.innerHTML = category;
-        categoryDOM.appendChild(opt);
+        document.querySelector("#category").appendChild(opt);
     });
 }

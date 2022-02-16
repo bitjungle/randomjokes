@@ -18,6 +18,18 @@ window.addEventListener('load', init);
 function init() {
     console.log('init()');
     document.querySelector("#saveJokeButton").addEventListener('click', saveJoke);
+    const params = (new URL(document.location)).searchParams;
+    const id = params.get('id') === null ? -1 : parseInt(params.get('id'));
+    if (id >= 0) {
+        jokeToForm(id);
+        document.querySelector("#heading").innerHTML = 'Edit joke';
+    }
+}
+
+async function jokeToForm(id) {
+    const joke = await jokeapi.getJoke(id);
+    document.querySelector("#newJokeText").innerHTML = joke.value;
+    document.querySelector("#jokeId").setAttribute('value', id);
 }
 
 async function saveJoke() {

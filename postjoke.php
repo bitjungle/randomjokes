@@ -12,7 +12,7 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 try {
-    $db = new Database('settings-jokes-runeelev.ini');
+    $db = new Database('settings.ini');
 
      if (!isset($_POST['pwd']) || $db->validatePassword($_POST['pwd']) == 0) {
         echo '{"status": "wrong password"}';
