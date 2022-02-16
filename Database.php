@@ -73,6 +73,7 @@ class Database extends PDO
         $stmt = $this->prepare($query);
         $stmt->execute(['joke_id' => $id]);
         $assoc = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $assoc[0]['categories'] = $this->getCategoriesForJoke($id);
         return $assoc;
     }
 
@@ -105,6 +106,7 @@ class Database extends PDO
         $stmt = $this->prepare($query);
         $stmt->execute(['search_string' => $cat_id]);
         $assoc = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $assoc[0]['categories'] = $this->getCategoriesForJoke($assoc[0]['id']);
         return $assoc;
     }
 
@@ -158,6 +160,26 @@ class Database extends PDO
     }
 
     /**
+     * Get categories for a specific joke
+     * 
+     * @param int $jokeId
+     * @return array
+     */
+    private function getCategoriesForJoke($jokeId) {
+        $query = 'SELECT value 
+                  FROM categories 
+                  WHERE id IN (
+                      SELECT categories_id 
+                      FROM jokes_categories 
+                      WHERE joke_id = :joke_id
+                  );';
+        $stmt = $this->prepare($query);
+        $stmt->execute(['joke_id' => $jokeId]);
+        $assoc = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_column($assoc, 'value');
+    }
+
+    /**
      * Insert new joke into the database
      * 
      * @param string $joke
@@ -165,9 +187,9 @@ class Database extends PDO
      */
     public function insertJoke($joke) {
         $query = "INSERT INTO `jokes` (`value`, `added_date`, `changed_date`, `deleted`)
-                  VALUES (:joke_string, now(), now(), '0')";
+                  VALUES (:joke_value, now(), now(), '0')";
         $stmt = $this->prepare($query);
-        return $stmt->execute(['joke_string' => $joke]);
+        return $stmt->execute(['joke_value' => $joke]);
     }
 
     /**
@@ -179,11 +201,11 @@ class Database extends PDO
      */
     public function updateJoke($id, $joke) {
         $query = "UPDATE `jokes` SET
-                    `value` = :joke_string,
+                    `value` = :joke_value,
                     `changed_date` = now()
-                  WHERE `id` = :id_value;";
+                  WHERE `id` = :joke_id;";
         $stmt = $this->prepare($query);
-        return $stmt->execute(['id_value' => $id, 'joke_string' => $joke]);
+        return $stmt->execute(['joke_id' => $id, 'joke_value' => $joke]);
     }
 
     /**
@@ -196,9 +218,9 @@ class Database extends PDO
         $query = "UPDATE `jokes` SET
                     `deleted` = 1,
                     `changed_date` = now()
-                  WHERE `id` = :id_value;";
+                  WHERE `id` = :joke_id;";
         $stmt = $this->prepare($query);
-        return $stmt->execute(['id_value' => $id]);
+        return $stmt->execute(['joke_id' => $id]);
     }
 }
 ?>
