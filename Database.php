@@ -68,8 +68,6 @@ class Database extends PDO
                     FROM jokes 
                     WHERE id = :joke_id
                     AND deleted = 0;";
-        error_log('iiiidddd' + id);
-        error_log($query);
         $stmt = $this->prepare($query);
         $stmt->execute(['joke_id' => $id]);
         $assoc = $stmt->fetchAll(PDO::FETCH_ASSOC);
