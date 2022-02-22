@@ -12,7 +12,7 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 try {
-    $db = new Database('settings.ini');
+    $db = new Database('settings-jokes-runeelev.ini');
     if (isset($_POST['category']) && strlen($_POST['category']) > 0) {
         echo json_encode($db->selectRandomJoke($_POST['category'])[0]);
     } else if (isset($_GET['category']) && strlen($_GET['category']) > 0) {

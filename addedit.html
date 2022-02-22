@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,12 +9,16 @@
     <script src="addedit.js" type="module" defer></script>
     <link rel="stylesheet" href="randomjoke.css">
 </head>
+
 <body>
     <h1 id="heading">Enter new joke</h1>
-    <textarea id="newJokeText" rows="6" cols="80"></textarea><br>
-    Database password:<br><input type="password" id="pwd">
-    <input type="hidden" id="jokeId" value="-1">
-    <div id="categories"></div> <!-- TODO -->
-    <button id="saveJokeButton">SAVE</button>
+    <div id="formArea">
+        <textarea id="newJokeText" rows="6" cols="80"></textarea><br>
+        Database password:<br><input type="password" id="pwd">
+        <input type="hidden" id="jokeId" value="0">
+        <div id="categories"></div>
+        <button id="saveJokeButton">SAVE</button><div id="postResponse"></div>
+    </div>
 </body>
+
 </html>

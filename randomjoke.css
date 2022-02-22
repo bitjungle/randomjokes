@@ -42,3 +42,7 @@ textarea {
     border-left: 25%;
     width: auto;
 }
+#postResponse {
+    background-color: cornsilk;
+    width: fit-content;
+}

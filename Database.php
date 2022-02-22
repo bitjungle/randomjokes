@@ -38,7 +38,9 @@ class Database extends PDO
      * 
      * @return bool 
      */
-    public function validatePassword($pwd) {
+    public function validatePassword($pwd) 
+    {
+        //error_log('validatePassword(###)', 0);
         return ($this->_ini['db']['passwd'] == $pwd);
     }
 
@@ -50,6 +52,7 @@ class Database extends PDO
      */
     public function getAllJokes() 
     {
+        //error_log('getAllJokes()', 0);
         $query = 'SELECT * FROM jokes WHERE deleted = 0;';
         $stmt = $this->prepare($query);
         $stmt->execute();
@@ -64,6 +67,7 @@ class Database extends PDO
      */
     public function selectJoke($id) 
     {
+        //error_log('selectJoke(' . $id . ')', 0);
         $query = "SELECT id, value, added_date, changed_date 
                     FROM jokes 
                     WHERE id = :joke_id
@@ -83,6 +87,7 @@ class Database extends PDO
      */
     public function selectRandomJoke($category=NULL) 
     {
+        //error_log('selectRandomJoke(' . $category . ')', 0);
         $cat_id = NULL;
         if ($category) {
             $cat_id = $this->getCategoryId($category);
@@ -116,6 +121,7 @@ class Database extends PDO
      */
     public function searchJokes($str) 
     {
+        //error_log('searchJokes(' . $str . ')', 0);
         $query = 'SELECT id, value, added_date, changed_date  
                   FROM jokes 
                   WHERE value LIKE :search_string  
@@ -132,6 +138,7 @@ class Database extends PDO
      */
     public function getAllCategories() 
     {
+        //error_log('getAllCategories()', 0);
         $query = 'SELECT value FROM categories;';
         $stmt = $this->prepare($query);
         $stmt->execute();
@@ -149,7 +156,9 @@ class Database extends PDO
      * @param string $category
      * @return int
      */
-    private function getCategoryId($category) {
+    private function getCategoryId($category) 
+    {
+        //error_log('getCategoryId(' . $category . ')', 0);
         $query = 'SELECT id FROM categories WHERE value = :search_string;';
         $stmt = $this->prepare($query);
         $stmt->execute(['search_string' => $category]);
@@ -163,7 +172,9 @@ class Database extends PDO
      * @param int $jokeId
      * @return array
      */
-    private function getCategoriesForJoke($jokeId) {
+    private function getCategoriesForJoke($jokeId) 
+    {
+        //error_log('getCategoriesForJoke(' . $jokeId . ')', 0);
         $query = 'SELECT value 
                   FROM categories 
                   WHERE id IN (
@@ -181,13 +192,16 @@ class Database extends PDO
      * Insert new joke into the database
      * 
      * @param string $joke
-     * @return bool true on success or false on failure
+     * @return int The record id or 0 on failure
      */
-    public function insertJoke($joke) {
+    public function insertJoke($joke) 
+    {
+        //error_log('insertJoke(' . $joke . ')', 0);
         $query = "INSERT INTO `jokes` (`value`, `added_date`, `changed_date`, `deleted`)
                   VALUES (:joke_value, now(), now(), '0')";
         $stmt = $this->prepare($query);
-        return $stmt->execute(['joke_value' => $joke]);
+        $ok = $stmt->execute(['joke_value' => $joke]);
+        return $ok ? $this->lastInsertId(): 0;
     }
 
     /**
@@ -197,10 +211,12 @@ class Database extends PDO
      * @param string $joke
      * @return bool true on success or false on failure
      */
-    public function updateJoke($id, $joke) {
+    public function updateJoke($id, $joke) 
+    {
+        //error_log('updateJoke(' . $id . ',' . $joke . ')', 0);
         $query = "UPDATE `jokes` SET
-                    `value` = :joke_value,
-                    `changed_date` = now()
+                      `value` = :joke_value,
+                      `changed_date` = now()
                   WHERE `id` = :joke_id;";
         $stmt = $this->prepare($query);
         return $stmt->execute(['joke_id' => $id, 'joke_value' => $joke]);
@@ -212,13 +228,66 @@ class Database extends PDO
      * @param int $id
      * @return bool true on success or false on failure
      */
-    public function deleteJoke($id) {
+    public function deleteJoke($id) 
+    {
+        //error_log('deleteJoke(' . $id . ')', 0);
         $query = "UPDATE `jokes` SET
-                    `deleted` = 1,
-                    `changed_date` = now()
+                      `deleted` = 1,
+                      `changed_date` = now()
                   WHERE `id` = :joke_id;";
         $stmt = $this->prepare($query);
         return $stmt->execute(['joke_id' => $id]);
+    }
+
+    /**
+     * Delete all categoies assigned to a joke
+     * 
+     * @param int $id
+     * @return bool true on success or false on failure
+     */
+    public function deleteCategoriesForJoke($id) 
+    {
+        //error_log('deleteCategoriesForJoke(' . $id . ')', 0);
+        $query = "DELETE FROM `jokes_categories`
+                  WHERE `joke_id` = :joke_id;";
+        $stmt = $this->prepare($query);
+        return $stmt->execute(['joke_id' => $id]);
+    }
+
+    /**
+     * Insert joke categories into the database
+     * 
+     * @param int   $id
+     * @param array $categories
+     * @return bool true on success or false on failure
+     */
+    public function insertCategoriesForJoke($id, $categories) 
+    {
+        //error_log('insertCategoriesForJoke(' . $id . ',[' . implode(',', $categories) . '])', 0);
+        $query = "INSERT INTO `jokes_categories` (`joke_id`, `categories_id`)
+                  VALUES (:joke_id,:categories_id)";
+        $stmt = $this->prepare($query);
+        $success = TRUE;
+        foreach ($categories as $cat) {
+            $catId = $this->getCategoryId($cat);
+            $ok = $stmt->execute(['joke_id' => $id, 'categories_id' => $catId]);
+            if (!$ok) $success = FALSE;
+        }
+        return $success;
+    }
+
+    /**
+     * Update all categoies assigned to a joke
+     * 
+     * @param int $id
+     * @return bool true on success or false on failure
+     */
+    public function updateCategoriesForJoke($id, $categories) 
+    {
+        //error_log('updateCategoriesForJoke(' . $id . ',[' . implode(',', $categories) . '])', 0);
+        $ok = $this->deleteCategoriesForJoke($id);
+        $this->insertCategoriesForJoke($id, $categories);
+        return $ok;
     }
 }
 ?>

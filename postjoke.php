@@ -12,7 +12,7 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 try {
-    $db = new Database('settings.ini');
+    $db = new Database('settings-jokes-runeelev.ini');
 
      if (!isset($_POST['pwd']) || $db->validatePassword($_POST['pwd']) == 0) {
         echo '{"status": "wrong password"}';
@@ -21,19 +21,25 @@ try {
    
     if (isset($_POST['joke']) && strlen($_POST['joke']) > 0) {
         if (isset($_POST['id']) && is_numeric($_POST['id'])) {
-            $db->updateJoke(intval($_POST['id']), $_POST['joke']);
-            echo '{"status": "updated joke"}';
+            $id = intval($_POST['id']);
+            $db->updateJoke($id, $_POST['joke']);
+            $status = 'updated joke';
         } else {
-            $db->insertJoke($_POST['joke']);
-            echo '{"status": "inserted joke"}';
+            $id = $db->insertJoke($_POST['joke']);
+            $status =  "inserted joke with id={$id}";
+        }
+        if (isset($_POST['categories'])) {
+            $db->updateCategoriesForJoke($id, $_POST['categories']);
         }
     } else if ((isset($_POST['delete']) && $_POST['delete'] == 'true') && 
                (isset($_POST['id']) && is_numeric($_POST['id']))) {
             $db->deleteJoke($_POST['id']);
-            echo '{"status": "deleted joke"}';
+            $status = 'deleted joke';
     } else {
-        echo '{"status": "did nothing"}';
+        $status = 'did nothing';
     }
+
+    echo "{\"status\": \"{$status}\"}";
 
 } catch (exception $e) {
     http_response_code(503); // Service Unavailable

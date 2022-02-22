@@ -45,10 +45,10 @@ export default class JokeAPI {
      * 
      * @returns string
      */
-    async getJoke(id = -1) {
+    async getJoke(id = 0) {
         console.log('JokeAPI.getJoke()');
         let params = {};
-        if (id >= 0) {
+        if (id > 0) {
             params.id = id;
             return await this.fetchStuff(this.DB_API_URL_JOKE_ID, params);
         } else {

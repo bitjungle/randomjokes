@@ -12,7 +12,7 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 try {
-    $db = new Database('settings.ini');
+    $db = new Database('settings-jokes-runeelev.ini');
     error_log('id=' . $_GET['id'], 0);
     if (isset($_GET['id']) && strlen($_GET['id']) > 0) {
         echo json_encode($db->selectJoke(intval($_GET['id']))[0]);
